@@ -57,17 +57,6 @@ jobs:
                 cd panda/tests/safety && \
                 ./test.sh"
 
-  safety_replay:
-    name: safety replay
-    runs-on: ubuntu-20.04
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build Docker image
-        run: eval "$BUILD"
-      - name: Run safety replay
-        run: $RUN "cd /tmp/openpilot/panda/tests/safety_replay && ./test_safety_replay.py"
-
   misra:
     name: misra c2012
     runs-on: ubuntu-20.04
