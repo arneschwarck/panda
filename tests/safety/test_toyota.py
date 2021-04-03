@@ -6,18 +6,18 @@ from panda.tests.safety import libpandasafety_py
 import panda.tests.safety.common as common
 from panda.tests.safety.common import CANPackerPanda, make_msg, UNSAFE_MODE
 
-MAX_ACCEL = 1.5
-MIN_ACCEL = -3.0
+MAX_ACCEL = 3.5
+MIN_ACCEL = -3.5
 
-ISO_MAX_ACCEL = 2.0
-ISO_MIN_ACCEL = -3.5
+ISO_MAX_ACCEL = 4.0
+ISO_MIN_ACCEL = -5.0
 
 class TestToyotaSafety(common.PandaSafetyTest, common.InterceptorSafetyTest,
                        common.TorqueSteeringSafetyTest):
 
   TX_MSGS = [[0x283, 0], [0x2E6, 0], [0x2E7, 0], [0x33E, 0], [0x344, 0], [0x365, 0], [0x366, 0], [0x4CB, 0],  # DSU bus 0
              [0x128, 1], [0x141, 1], [0x160, 1], [0x161, 1], [0x470, 1],  # DSU bus 1
-             [0x2E4, 0], [0x411, 0], [0x412, 0], [0x343, 0], [0x1D2, 0],  # LKAS + ACC
+             [0x2E4, 0], [0x411, 0], [0x412, 0], [0x343, 0], [0x1D3, 0],  # LKAS + ACC
              [0x200, 0], [0x750, 0]]  # interceptor + blindspot monitor
   STANDSTILL_THRESHOLD = 1  # 1kph
   RELAY_MALFUNCTION_ADDR = 0x2E4
@@ -27,11 +27,11 @@ class TestToyotaSafety(common.PandaSafetyTest, common.InterceptorSafetyTest,
   INTERCEPTOR_THRESHOLD = 845
 
   MAX_RATE_UP = 10
-  MAX_RATE_DOWN = 25
+  MAX_RATE_DOWN = 44
   MAX_TORQUE = 1500
   MAX_RT_DELTA = 375
   RT_INTERVAL = 250000
-  MAX_TORQUE_ERROR = 350
+  MAX_TORQUE_ERROR = 500
   TORQUE_MEAS_TOLERANCE = 1  # toyota safety adds one to be conversative for rounding
 
   def setUp(self):
