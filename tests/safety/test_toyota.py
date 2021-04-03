@@ -22,7 +22,7 @@ class TestToyotaSafety(common.PandaSafetyTest, common.InterceptorSafetyTest,
   STANDSTILL_THRESHOLD = 1  # 1kph
   RELAY_MALFUNCTION_ADDR = 0x2E4
   RELAY_MALFUNCTION_BUS = 0
-  FWD_BLACKLISTED_ADDRS = {2: [0x2E4, 0x412, 0x191, 0x343, 0x1D3]}
+  FWD_BLACKLISTED_ADDRS = {2: [0x2E4, 0x412, 0x191, 0x343]}
   FWD_BUS_LOOKUP = {0: 2, 2: 0}
   INTERCEPTOR_THRESHOLD = 845
 
@@ -66,8 +66,8 @@ class TestToyotaSafety(common.PandaSafetyTest, common.InterceptorSafetyTest,
     return self.packer.make_can_msg_panda("PCM_CRUISE", 0, values)
 
   def _pcm_status_msg(self, enable):
-    values = {"CRUISE_ACTIVE": enable}
-    return self.packer.make_can_msg_panda("PCM_CRUISE", 0, values)
+    values = {"MAIN_ON": enable}
+    return self.packer.make_can_msg_panda("PCM_CRUISE_2", 0, values)
 
   # Toyota gas gains are the same
   def _interceptor_msg(self, gas, addr):
