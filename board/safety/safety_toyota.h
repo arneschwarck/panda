@@ -33,7 +33,7 @@ const CanMsg TOYOTA_TX_MSGS[] = {{0x283, 0, 7}, {0x2E6, 0, 8}, {0x2E7, 0, 8}, {0
                                   {0x128, 1, 6}, {0x141, 1, 4}, {0x160, 1, 8}, {0x161, 1, 7}, {0x470, 1, 4},  // DSU bus 1
                                   {0x367, 0, 2}, {0x414, 0, 8}, {0x489, 0, 8}, {0x48a, 0, 8}, {0x48b, 0, 8}, {0x4d3, 0, 8}, // CAM bus 0
                                   {0x130, 1, 7}, {0x240, 1, 7}, {0x241, 1, 7}, {0x244, 1, 7}, {0x245, 1, 7}, {0x248, 1, 7}, {0x466, 1, 3}, // CAM bus 1
-                                  {0x2E4, 0, 5}, {0x411, 0, 8}, {0x412, 0, 8}, {0x343, 0, 8}, {0x1D2, 0, 8},  // LKAS + ACC
+                                  {0x2E4, 0, 5}, {0x191, 0, 8}, {0x411, 0, 8}, {0x412, 0, 8}, {0x343, 0, 8}, {0x1D2, 0, 8},  // LKAS + ACC
                                   {0x200, 0, 6}, {0x750, 0, 8}};  // interceptor + BSM
 
 AddrCheckStruct toyota_rx_checks[] = {
@@ -181,6 +181,21 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
         max_limit_check(desired_accel, TOYOTA_MAX_ACCEL, TOYOTA_MIN_ACCEL);
 
       if (violation) {
+        tx = 0;
+      }
+    }
+
+    // LTA steering check
+    // only sent to prevent dash errors, no actuation is accepted
+    if (addr == 0x191) {
+      // check the STEER_REQUEST, STEER_REQUEST_2, and STEER_ANGLE_CMD signals
+      bool lta_request = (GET_BYTE(to_send, 0) & 1) != 0;
+      bool lta_request2 = ((GET_BYTE(to_send, 3) >> 1) & 1) != 0;
+      int lta_angle = (GET_BYTE(to_send, 1) << 8) | GET_BYTE(to_send, 2);
+      lta_angle = to_signed(lta_angle, 16);
+
+      // block LTA msgs with actuation requests
+      if (lta_request || lta_request2 || (lta_angle != 0)) {
         tx = 0;
       }
     }
